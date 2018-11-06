@@ -1,4 +1,4 @@
-const { PORT, ENDPOINT, SERVER_KEY_PAIR } = require("../config.js");
+const { ENDPOINT, SERVER_KEY_PAIR } = require("../config.js");
 
 // Generates and serves Stellar.toml file based on current server configuration.
 module.exports = (req, res) => {

@@ -9,9 +9,20 @@ const ENDPOINT = `http://localhost:${PORT}/auth`;             // Endpoint for St
 const JWT_TOKEN_LIFETIME = 3600;                              // JWT token will be expire in seconds
 const JWT_SECRET = process.env.JWT_SECRET;                    // JWT secret
 
+// Account public keys allowed to access
+const ALLOWED_ACCOUNTS = (process.env.ALLOWED_ACCOUNTS || "").split(",");
+
 // Stellar::Keypair for server private key, used for signing transactions
 const SERVER_KEY_PAIR = stellar.Keypair.fromSecret(SERVER_PRIVATE_KEY);
 
 module.exports = {
-  PORT, BIND, SERVER_KEY_PAIR, CHALLENGE_EXPIRE_IN, INVALID_SEQUENCE, ENDPOINT, JWT_TOKEN_LIFETIME, JWT_SECRET
+  PORT,
+  BIND,
+  SERVER_KEY_PAIR,
+  CHALLENGE_EXPIRE_IN,
+  INVALID_SEQUENCE,
+  ENDPOINT,
+  JWT_TOKEN_LIFETIME,
+  JWT_SECRET,
+  ALLOWED_ACCOUNTS
 };

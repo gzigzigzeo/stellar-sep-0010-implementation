@@ -1,5 +1,5 @@
 const { Transaction, Keypair } = require("stellar-sdk");
-const { SERVER_KEY_PAIR, ENDPOINT, JWT_TOKEN_LIFETIME } = require("../config.js");
+const { SERVER_KEY_PAIR, ENDPOINT, JWT_TOKEN_LIFETIME, JWT_SECRET, ALLOWED_ACCOUNTS } = require("../config.js");
 const jwt = require("jsonwebtoken");
 
 module.exports = (req, res) => {
@@ -48,15 +48,21 @@ module.exports = (req, res) => {
     return res.json({ error: "Client signature is missing or invalid." });
   }
 
+  // Check that this account access is allowed
+  if (ALLOWED_ACCOUNTS.indexOf(op.source) == -1) {
+    console.info(`${op.source} requested token => access denied, check ALLOWED_ACCOUNTS`);    
+    return res.json({ error: `${op.source} access denied.` });
+  }
+
   console.info(`${op.source} requested token => OK`);
 
   const token = jwt.sign({
     iss: ENDPOINT,
     sub: op.source,
     iat: Math.floor(Date.now() / 1000),
-    exp: Math.floor(Date.now() / 1000) + 60*60,
+    exp: Math.floor(Date.now() / 1000) + JWT_TOKEN_LIFETIME,
     jwtid: tx.hash().toString("hex")
-  }, "SECRET");
+  }, JWT_SECRET);
 
   res.json({ token: token });
 };
