@@ -1,6 +1,7 @@
 module.exports = (req, res) => {
   const tx = req.query.transaction;
-  
+
+  console.log(tx);
 };
 
 // const keypair = stellar.Keypair.fromPublicKey(tx.source);

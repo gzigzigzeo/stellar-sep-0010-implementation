@@ -9,4 +9,6 @@ const INVALID_SEQUENCE = "0";                                 // Default sequenc
 // Stellar::KeyPair for server private key, used for signing transactions
 const SERVER_KEY_PAIR = stellar.Keypair.fromSecret(SERVER_PRIVATE_KEY);
 
+console.log(SERVER_KEY_PAIR.publicKey());
+
 module.exports = { PORT, BIND, SERVER_KEY_PAIR, CHALLENGE_EXPIRE_IN, INVALID_SEQUENCE };

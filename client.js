@@ -9,7 +9,7 @@ stellar.Network.useTestNetwork();
 const DOMAIN = "http://localhost:3000/";
 
 // Our (client) Stellar::KeyPair we will use to sign challenge transaction.
-const CLIENT_KEYPAIR = stellar.Keypair.fromSecret(process.env.CLIENT_PRIVATE_KEY);
+const CLIENT_KEY_PAIR = stellar.Keypair.fromSecret(process.env.CLIENT_PRIVATE_KEY);
 
 request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
   if (err) { return console.log(err); }
@@ -39,16 +39,16 @@ request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
     );
 
     if (!valid) {
-      return console.log(err);
+      return console.log("Signature is invalid");
     }
 
     // Sign transaction with our key
-    tx.sign(keypair);
+    tx.sign(CLIENT_KEY_PAIR);
     const signed = tx.toEnvelope().toXDR("base64");
 
     // Request access token
     request(endpoint, { method: "POST" }, (err, res, body) => {
-      console.log("Here goes JWT token": res.query.token);
+      console.log("Here goes JWT token", res.query.token);
     });
   });
 });
