@@ -45,11 +45,10 @@ request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
     // Sign transaction with our key
     tx.sign(CLIENT_KEY_PAIR);
     const signed = tx.toEnvelope().toXDR("base64");
-    console.log(signed);
 
     // Request access token
     request.post({ url: ENDPOINT, form: { transaction: signed } }, (err, res, body) => {
-      console.log("Here goes JWT token", body);
+      console.log(body);
     });
   });
 });

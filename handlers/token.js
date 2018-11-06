@@ -1,5 +1,6 @@
 const { Transaction, Keypair } = require("stellar-sdk");
-const { SERVER_KEY_PAIR } = require("../config.js");
+const { SERVER_KEY_PAIR, ENDPOINT, JWT_TOKEN_LIFETIME } = require("../config.js");
+const jwt = require("jsonwebtoken");
 
 module.exports = (req, res) => {
   const tx = new Transaction(req.body.transaction);
@@ -49,5 +50,13 @@ module.exports = (req, res) => {
 
   console.info(`${op.source} requested token => OK`);
 
-  res.json("ok");
+  const token = jwt.sign({
+    iss: ENDPOINT,
+    sub: op.source,
+    iat: Math.floor(Date.now() / 1000),
+    exp: Math.floor(Date.now() / 1000) + 60*60,
+    jwtid: tx.hash().toString("hex")
+  }, "SECRET");
+
+  res.json({ token: token });
 };
