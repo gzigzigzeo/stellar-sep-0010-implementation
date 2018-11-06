@@ -14,15 +14,16 @@ const CLIENT_KEY_PAIR = stellar.Keypair.fromSecret(process.env.CLIENT_PRIVATE_KE
 request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
   if (err) { return console.log(err); }
 
-  // Stellar.toml contains auth endpoint address we should use for challenge request.
   const config = toml.parse(body);
-  const endpoint = config.WEB_AUTH_ENDPOINT;
+
+  // Auth endpoint
+  const ENDPOINT = config.WEB_AUTH_ENDPOINT;
 
   // Server Stellar::KeyPair, we use it to check server signature.
   const SERVER_KEY_PAIR = stellar.Keypair.fromPublicKey(config.ACCOUNTS[0]);
 
   // Request challenge transaction
-  request(endpoint, { json: true }, (err, res, body) => {
+  request(`${ENDPOINT}?public_key=${CLIENT_KEY_PAIR.publicKey()}`, { json: true }, (err, res, body) => {
     if (err) {
       return console.log(err);
     }
@@ -39,16 +40,17 @@ request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
     );
 
     if (!valid) {
-      return console.log("Signature is invalid");
+      return console.log("Server signature not found");
     }
 
     // Sign transaction with our key
     tx.sign(CLIENT_KEY_PAIR);
     const signed = tx.toEnvelope().toXDR("base64");
+    console.log(signed);
 
     // Request access token
-    request(endpoint, { method: "POST" }, (err, res, body) => {
-      console.log("Here goes JWT token", res.query.token);
+    request.post({ url: ENDPOINT, form: { transaction: signed } }, (err, res, body) => {
+      console.log("Here goes JWT token", body);
     });
   });
 });

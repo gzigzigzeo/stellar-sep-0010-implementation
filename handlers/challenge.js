@@ -14,11 +14,12 @@ const randomNonce = () => {
 
 // GET /auth => { transaction: "base64 tx xdr" }
 const challenge = (req, res) => {
-  // Requesting client public key
+  // Public key of the client requesting access.
   const clientPublicKey = req.query.public_key;
 
   // Transaction time bounds, current time..+300 seconds by default.
   // In other words, challenge transaction will expire in 5 minutes since it was generated.
+  // This prevents replay attacks.
   const minTime = Date.now();
   const maxTime = minTime + CHALLENGE_EXPIRE_IN;
   const timebounds = { minTime: minTime.toString(), maxTime: maxTime.toString() };
@@ -33,7 +34,7 @@ const challenge = (req, res) => {
   });
 
   const tx = new stellar.TransactionBuilder(account, { timebounds }).addOperation(op).build();
-  tx.sign(SERVER_KEY_PAIR); // Signed by us
+  tx.sign(SERVER_KEY_PAIR); // Sign by us
   res.json({ transaction: tx.toEnvelope().toXDR("base64") });
 };
 

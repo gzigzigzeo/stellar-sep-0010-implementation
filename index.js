@@ -1,8 +1,11 @@
-const stellar = require("stellar-sdk");
-const express = require("express");
-const { PORT, BIND } = require("./config.js");
+const stellar   = require("stellar-sdk");
+const express   = require("express");
+const bp        = require('body-parser');
+
 const challenge = require("./handlers/challenge.js");
-const token = require("./handlers/token.js");
+const token     = require("./handlers/token.js");
+
+const { PORT, BIND } = require("./config.js");
 
 // Stellar uses current network key in transaction signatures to ensure transaction prepared for test network
 // will be invalid in public network and vice versa. It does not matter which network to use in our case, except
@@ -10,8 +13,9 @@ const token = require("./handlers/token.js");
 stellar.Network.useTestNetwork();
 
 const app = express();
-app.use(express.static('public')) // Serve Stellar.toml
-app.get("/auth", challenge);      // GET /auth => challenge transactions
-app.post("/auth", challenge);     // POST /auth => access token
+app.use(express.static('public'))           // Serve Stellar.toml
+app.use(bp.urlencoded({ extended: true })); // Allow parameters in POST requests
+app.get("/auth", challenge);                // GET /auth => challenge transactions
+app.post("/auth", token);                   // POST /auth => access token
 
 app.listen(PORT, BIND);
