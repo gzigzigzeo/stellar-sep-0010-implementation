@@ -47,5 +47,7 @@ module.exports = (req, res) => {
     return res.json({ error: "Client signature is missing or invalid." });
   }
 
+  console.info(`${op.source} requested token => OK`);
+
   res.json("ok");
 };

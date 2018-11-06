@@ -1,14 +1,13 @@
 const stellar = require("stellar-sdk");
-const express = require("express");
 const request = require("request");
 const toml    = require("toml");
 
 stellar.Network.useTestNetwork();
 
 // Base url for Stellar.toml
-const DOMAIN = "http://localhost:3000/";
+const DOMAIN = "http://localhost:3000";
 
-// Our (client) Stellar::KeyPair we will use to sign challenge transaction.
+// Our (client) Stellar::Keypair we will use to sign challenge transaction.
 const CLIENT_KEY_PAIR = stellar.Keypair.fromSecret(process.env.CLIENT_PRIVATE_KEY);
 
 request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
@@ -19,8 +18,8 @@ request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
   // Auth endpoint
   const ENDPOINT = config.WEB_AUTH_ENDPOINT;
 
-  // Server Stellar::KeyPair, we use it to check server signature.
-  const SERVER_KEY_PAIR = stellar.Keypair.fromPublicKey(config.ACCOUNTS[0]);
+  // Server Stellar::Keypair, we use it to check server signature.
+  const SERVER_KEY_PAIR = stellar.Keypair.fromPublicKey(config.AUTH_ACCOUNT);
 
   // Request challenge transaction
   request(`${ENDPOINT}?public_key=${CLIENT_KEY_PAIR.publicKey()}`, { json: true }, (err, res, body) => {

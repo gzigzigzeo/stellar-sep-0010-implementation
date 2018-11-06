@@ -35,6 +35,8 @@ const challenge = (req, res) => {
   const tx = new stellar.TransactionBuilder(account, { timebounds }).addOperation(op).build();
   tx.sign(SERVER_KEY_PAIR); // Sign by us
   res.json({ transaction: tx.toEnvelope().toXDR("base64") });
+
+  console.info(`${clientPublicKey} requested challenge => OK`);
 };
 
 module.exports = challenge;
