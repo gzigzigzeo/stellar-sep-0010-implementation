@@ -24,9 +24,8 @@ const challenge = (req, res) => {
   const maxTime = minTime + CHALLENGE_EXPIRE_IN;
   const timebounds = { minTime: minTime.toString(), maxTime: maxTime.toString() };
 
-  // ManageData operation, source represents account requesting access to the service. It must be explicitly
-  // set here since transaction will not be fully valid until both accounts sign it. With no account set,
-  // transaction will be valid with server signature only.
+  // ManageData operation, source represents account requesting access to the service. It's signature will be
+  // validated in future.
   const op = stellar.Operation.manageData({
     source: clientPublicKey,
     name: "Sample auth",
