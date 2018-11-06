@@ -19,7 +19,7 @@ request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
   const ENDPOINT = config.WEB_AUTH_ENDPOINT;
 
   // Server Stellar::Keypair, we use it to check server signature.
-  const SERVER_KEY_PAIR = stellar.Keypair.fromPublicKey(config.AUTH_ACCOUNT);
+  const SERVER_KEY_PAIR = stellar.Keypair.fromPublicKey(config.WEB_AUTH_ACCOUNT);
 
   // Request challenge transaction
   request(`${ENDPOINT}?public_key=${CLIENT_KEY_PAIR.publicKey()}`, { json: true }, (err, res, body) => {
