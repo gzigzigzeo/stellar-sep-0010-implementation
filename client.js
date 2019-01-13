@@ -27,6 +27,8 @@ request(`${DOMAIN}/.well-known/Stellar.toml`, (err, res, body) => {
       return console.log(err);
     }
 
+    console.log("Challenge transaction XDR:", body.transaction);
+
     // Parse transaction XDR
     const tx = new stellar.Transaction(body.transaction);
     const { signatures } = tx;

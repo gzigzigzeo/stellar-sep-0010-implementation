@@ -2,6 +2,14 @@
 
 https://github.com/stellar/stellar-protocol/blob/master/ecosystem/sep-0010.md
 
+Examples for https://evilmartians.com/chronicles/blockchain-authentication
+
+## Installation
+
+```
+git clone https://github.com/gzigzigzeo/stellar-sep-0010-implementation && yarn install
+```
+
 ## Running server
 
 ```
