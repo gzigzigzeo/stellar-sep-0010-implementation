@@ -1,12 +1,19 @@
 const crypto = require("crypto");
 const stellar = require("stellar-sdk");
-const { SERVER_KEY_PAIR, CHALLENGE_EXPIRE_IN, INVALID_SEQUENCE } = require("../config.js");
+const {
+  SERVER_KEY_PAIR,
+  CHALLENGE_EXPIRE_IN,
+  INVALID_SEQUENCE
+} = require("../config.js");
 
-// Stellar::Account representing application's account, INVALID_SEQUENCE is used here to make sure this transaction
+// Stellar::Account representing the application's account, INVALID_SEQUENCE is used here to make sure this transaction
 // will be invalid if submitted to real network
-const account = new stellar.Account(SERVER_KEY_PAIR.publicKey(), INVALID_SEQUENCE);
+const account = new stellar.Account(
+  SERVER_KEY_PAIR.publicKey(),
+  INVALID_SEQUENCE
+);
 
-// This random sequence is used to ensure that two challenge transactions generated in the same will be different.
+// This random sequence is used to ensure that two challenge transactions generated at the same time will be different.
 // In other words, it makes every challenge transaction unique.
 const randomNonce = () => {
   return crypto.randomBytes(32).toString("hex");
@@ -22,18 +29,23 @@ const challenge = (req, res) => {
   // This prevents replay attacks.
   const minTime = Date.now();
   const maxTime = minTime + CHALLENGE_EXPIRE_IN;
-  const timebounds = { minTime: minTime.toString(), maxTime: maxTime.toString() };
+  const timebounds = {
+    minTime: minTime.toString(),
+    maxTime: maxTime.toString()
+  };
 
-  // ManageData operation, source represents account requesting access to the service. It's signature will be
-  // validated in future.
+  // ManageData operation, source represents an account that requests access to the service. Its signature will be
+  // validated later.
   const op = stellar.Operation.manageData({
     source: clientPublicKey,
     name: "Sample auth",
     value: randomNonce()
   });
 
-  const tx = new stellar.TransactionBuilder(account, { timebounds }).addOperation(op).build();
-  tx.sign(SERVER_KEY_PAIR); // Sign by us
+  const tx = new stellar.TransactionBuilder(account, { timebounds })
+    .addOperation(op)
+    .build();
+  tx.sign(SERVER_KEY_PAIR); // Sign by server
   res.json({ transaction: tx.toEnvelope().toXDR("base64") });
 
   console.info(`${clientPublicKey} requested challenge => OK`);
